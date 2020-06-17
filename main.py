@@ -25,10 +25,10 @@ def get_users():
 @app.get('/user/{user_id}')
 def get_user(user_id: int):
     '''Get a specific user'''
-    try:
-        return list(filter(lambda user: user['id'] == user_id, fake_db))[0]
-    except IndexError:
+    user = list(filter(lambda user: user['id'] == user_id, fake_db))
+    if len(user) == 0:
         raise HTTPException(status_code=404, detail='User not found')
+    return user[0]
 
 
 @app.put('/user/{user_id}')
@@ -37,7 +37,10 @@ def edit_user():
     pass
 
 
-@app.delete('/user/{user_id}')
-def delete_user():
+@app.delete('/user/{user_id}', status_code=204)
+def delete_user(user_id: int):
     '''Delete user'''
-    pass
+    user = list(filter(lambda user: user['id'] == user_id, fake_db))
+    if len(user) == 0:
+        raise HTTPException(status_code=404, detail='User not found')
+    fake_db.remove(user[0])
