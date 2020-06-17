@@ -42,10 +42,14 @@ def get_user(user_id: int):
     raise HTTPException(status_code=404, detail='User not found')
 
 
-@app.put('/user/{user_id}')
-def edit_user():
+@app.put('/user/{user_id}', status_code=204)
+def edit_user(user_id: int, user_update: User):
     '''Edit user'''
-    pass
+    user = list(filter(lambda user: user['id_'] == user_id, fake_db))
+    if user:
+        user[0]['username'] = user_update.username
+    else:
+        raise HTTPException(status_code=404, detail='User not found')
 
 
 @app.delete('/user/{user_id}', status_code=204)
